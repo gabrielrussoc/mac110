@@ -1,24 +1,23 @@
 #include <stdio.h>
 
 int main(){
-	int n,soma;
+	int n,soma = 0;
 
 	scanf("%d",&n);
-	soma = n;
 
-	while(soma > 10){
-		soma = 0;
-
+	while(n > 9){
+		
 		while (n > 0){
 			soma += n%10;
 			n = n/10;
 		}
 
-	n = soma;	
+		n = soma;
+		soma = 0;	
 
 	}
 
-	printf("%d\n",soma);
+	printf("%d\n",n);
 
 
 	return 0;
