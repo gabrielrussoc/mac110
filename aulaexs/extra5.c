@@ -1,17 +1,18 @@
 #include <stdio.h>
 
 int main(){
-	
-	float soma = 0;
-	int n,i;
+	int n,num,fat,i,j;
 
 	scanf("%d",&n);
 
-	for(i = 0; i < n; i++){
-		soma += (float) (i+1)/(n-i);
+	for(i = 0; i < n;i++){
+		scanf("%d",&num);
+		fat = 1;
+		for(j = 2; j <= num;j++){
+			fat = fat*j;
+		}
+		printf("%d! = %d\n",num,fat);
 	}
-
-	printf("%f\n",soma);
 
 	return 0;
 }

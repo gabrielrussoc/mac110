@@ -1,18 +1,19 @@
 #include <stdio.h>
 
 int main(){
-	int n,num,fat,i,j;
+	
+	int divisor, dividendo, resto, i;
 
-	scanf("%d",&n);
+	printf("Insira dois inteiros\n");
+	scanf("%d %d",&divisor,&dividendo);
 
-	for(i = 0; i < n;i++){
-		scanf("%d",&num);
-		fat = 1;
-		for(j = 2; j <= num;j++){
-			fat = fat*j;
-		}
-		printf("%d! = %d\n",num,fat);
+	while(dividendo % divisor > 0){
+		resto = dividendo % divisor;
+		dividendo = divisor;
+		divisor = resto;
 	}
+
+	printf("MDC = %d\n",divisor);
 
 	return 0;
 }
