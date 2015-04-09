@@ -2,7 +2,7 @@
 
 int main(){
 	
-	float x, eps = 0.001, termo, cosseno;
+	float x, termo, cosseno;
 	int k = 1,n, cont = 0;
 
 	cosseno = termo = 1;
