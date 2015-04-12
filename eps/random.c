@@ -4,20 +4,26 @@
 
 int main(){
 	
-	int a,b,m,x[100000],n, i;
+	int a,b,x,n = 100, i,pedra = 0, papel = 0, tesoura = 0;
 	a = 22695477;
 	b = 1;
-	m = 4294967295; 
+	unsigned int m = 2147483648;
 
-	scanf("%d %d",&x[0],&n);
-
+	scanf("%d",&x);
 	for(i = 0; i < n; i++){
 
-		x[i+1] = (a*x[i] + b)%m;
+		x = (a*x + b)%m;
 
-		printf("%d\n",x[i+1]);
+		if( (float) x/m < (float) 1/3)
+			pedra++;
+		else if( (float) x/m < (float) 2/3)
+			tesoura++;
+		else
+			papel++;
 
 	}
+
+	printf("%d %d %d\n",pedra,tesoura,papel);
 
 
 
