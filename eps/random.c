@@ -2,29 +2,29 @@
 
 #include <stdio.h>
 
-int main(){
-	
-	int a,b,x,n = 100, i,pedra = 0, papel = 0, tesoura = 0;
+long random(long x){
+
+	long a,b,m;
+
 	a = 22695477;
 	b = 1;
-	unsigned int m = 2147483648;
+	m = 4294967296;
 
-	scanf("%d",&x);
+	x = (x*a + b)%m;
+
+	return x;
+}
+
+int main(){
+	
+	int n, i, x = 3;
+	//n = numero de aleatorios
+
+	scanf("%d",&n);
 	for(i = 0; i < n; i++){
-
-		x = (a*x + b)%m;
-
-		if( (float) x/m < (float) 1/3)
-			pedra++;
-		else if( (float) x/m < (float) 2/3)
-			tesoura++;
-		else
-			papel++;
-
+		x = random(x);
+		printf("%f\n", (float) x/4294967296 );
 	}
-
-	printf("%d %d %d\n",pedra,tesoura,papel);
-
 
 
 
