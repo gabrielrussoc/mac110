@@ -5,14 +5,86 @@
 /*	********************************************************************* */
 
 #include <stdio.h>
-#define SEED 3
-#define TRUE 1
-#define FALSE 0
 #define PEDRA 1
 #define TESOURA 2
 #define PAPEL 3
 #define K 20
+#define EMPATE 0
+#define VITORIA 1
+#define DERROTA 2
 
+long random(long x){
+
+	int a,b;
+	long m;
+
+	a = 22695477;
+	b = 1;
+	m = 4294967296;
+
+	x = (x*a + b)%m;
+
+	return x;
+
+}
+
+int facil(long x){
+
+	int nancy;
+	long m;
+	m = 4294967296;
+
+	if( (float) x/m < 1.0/3){
+		nancy = PEDRA;
+	}	
+	else if( (float) x/m < 2.0/3){
+		nancy = TESOURA;
+	}	
+	else if( (float) x/m < 1){
+		nancy = PAPEL;
+	}
+
+	return nancy;
+
+}
+
+int medio(long x, int pedra, int tesoura, int papel, int tot){
+
+	int nancy;
+	long m;
+	m = 4294967296;
+
+	//chance do cara jogar papel
+	if( (float) x/m < (float) papel/tot ){
+		nancy = TESOURA;
+	}
+	//chance do cara jogar tesoura	
+	else if( (float) x/m < (float) (tesoura+papel)/tot){
+		nancy = PEDRA;
+	}
+	//chance do cara jogar pedra	
+	else if( (float) x/m <= 1){
+		nancy = PAPEL;
+	}
+
+	return nancy;
+
+}
+
+int verifica(int nancy, int humano){
+
+	int rodada;
+
+	if(nancy == humano){
+		rodada = EMPATE;
+	} else if(humano - nancy == 1 || humano - nancy == -2){
+		rodada = DERROTA;
+	} else {
+		rodada = VITORIA;
+	}
+
+	return rodada;
+}
 
 int main(){
 
@@ -25,10 +97,8 @@ int main(){
 	a,b,m,x = parametros para o metodo das congruencias lineares
 	*/
 	int nancy, humano, v, d, e, a, b, total, dif, historico[K], pedra, papel, tesoura, i, j, tot;
-	long m = 4294967296, x = SEED;
-	a = 22695477;
-	b = 1;
 	e = v = d = total = 0;
+	long x = 3;
 
 	for (i = 0; i < K; i++){
 		historico[i] = 0;
@@ -61,42 +131,17 @@ int main(){
 
 		while(humano){
 			
-			/*gera a jogada da maquina e printa a correspondencia*/	
-			x = (a*x + b)%m;
+			x = random(x);
+			nancy = facil(x);
 
-			if( (float) x/m < 1.0/3){
-				nancy = PEDRA;
-				printf("(Nancy) Pedra X ");
-			}	
-			else if( (float) x/m < 2.0/3){
-				nancy = TESOURA;
-				printf("(Nancy) Tesoura X ");
-			}	
-			else if( (float) x/m <= 1){
-				nancy = PAPEL;
-				printf("(Nancy) Papel X ");
-			}
-
-			/*printa a jogada correspondente do humano*/
-			if(humano == 1){
-				printf("Pedra (Voce)\n");
-			} else if (humano == 2){
-				printf("Tesoura (Voce)\n");
-			} else if (humano == 3){
-				printf("Papel (Voce)\n");
-			}
-
-			/*verifica a rodada*/
-			if(nancy == humano){
-				printf("Empate!\n");
+			if (verifica(nancy,humano) == EMPATE){
 				e++;
-			} else if(humano - nancy == 1 || humano - nancy == -2){
-				printf("Nancy ganhou!\n");
-				d++;
-			} else {
-				printf("Voce ganhou!\n");
+			} else if (verifica(nancy,humano) == VITORIA){
 				v++;
+			} else if (verifica(nancy,humano) == DERROTA){
+				d++;
 			}
+			
 
 			total++;
 
@@ -107,7 +152,7 @@ int main(){
 		}
 
 	} else if (dif == 2){
-			
+		
 		for (i = 0; humano; i++){
 
 			pedra = papel = tesoura = tot = 0;
@@ -160,52 +205,40 @@ int main(){
 				} 
 			} 
 
+			/*calcula a jogada da maquina com base nos dados levantados*/
+			
+			x = random(x);
+			nancy = medio(x,pedra,tesoura,papel,tot);
+
 			printf("Insira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
 			scanf("%d",&humano);
 			historico[i%K] = humano;
 
-			/*calcula a jogada da maquina com base nos dados levantados*/
-			
-			x = (a*x + b)%m;
-
-			//chance do cara jogar papel
-			if( (float) x/m < (float) papel/tot ){
-				nancy = TESOURA;
-				printf("(Nancy) Tesoura X ");
-			}
-			//chance do cara jogar tesoura	
-			else if( (float) x/m < (float) (tesoura+papel)/tot){
-				nancy = PEDRA;
-				printf("(Nancy) Pedra X ");
-			}
-			//chance do cara jogar pedra	
-			else if( (float) x/m <= 1){
-				nancy = PAPEL;
-				printf("(Nancy) Papel X ");
-			}
-
-			
-
-			if(humano == 1){
-				printf("Pedra (Voce)\n");
-			} else if (humano == 2){
-				printf("Tesoura (Voce)\n");
-			} else if (humano == 3){
-				printf("Papel (Voce)\n");
-			}
-
-			if(nancy == humano){
-				printf("Empate!\n");
+			if (verifica(nancy,humano) == EMPATE){
 				e++;
-			} else if(humano - nancy == 1 || humano - nancy == -2){
-				printf("Nancy ganhou!\n");
-				d++;
-			} else {
-				printf("Voce ganhou!\n");
+			} else if (verifica(nancy,humano) == VITORIA){
 				v++;
-			}	
+			} else if (verifica(nancy,humano) == DERROTA){
+				d++;
+			}
+			
+
+			
+				
+
 
 		}
+
+
+
+
+
+
+
+
+
+
+
 
 	} else if (dif == 3){
 		printf("ainda nao implementei hehehe\n");
