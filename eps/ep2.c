@@ -24,7 +24,7 @@ int main(){
 	v,d,e,total = vitorias, derrotas (do humano), empates e total
 	a,b,m,x = parametros para o metodo das congruencias lineares
 	*/
-	int nancy, humano, v, d, e, a, b, total, dif, historico[K], pedra, papel, tesoura, i, j, tot;
+	int nancy, humano = 1, v, d, e, a, b, total, dif, historico[K], pedra, papel, tesoura, i, j, tot;
 	long m = 4294967296, x = SEED;
 	a = 22695477;
 	b = 1;

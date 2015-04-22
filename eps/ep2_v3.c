@@ -10,7 +10,7 @@
 #define PAPEL 3
 #define K 20
 
-int vitHumano, vitNancy, empates, partidas;
+int vitHumano, vitNancy, empates, partidas, historico[K];
 
 long random(long x){
 
@@ -47,26 +47,71 @@ int facil(long x){
 
 }
 
-int medio(long x, int pedra, int tesoura, int papel, int tot){
+int medio(long x, int i){
 
-	int nancy;
+	int j, jogNancy, pedra, papel, tesoura, tot;
 	long m;
 	m = 4294967296;
+	pedra = papel = tesoura = tot = 0;
 
-	//chance do cara jogar papel
-	if( (float) x/m < (float) papel/tot ){
-		nancy = TESOURA;
-	}
-	//chance do cara jogar tesoura	
-	else if( (float) x/m < (float) (tesoura+papel)/tot ){
-		nancy = PEDRA;
-	}
-	//chance do cara jogar pedra	
-	else if( (float) x/m <= 1 ){
-		nancy = PAPEL;
-	}
+	/* se a anterior for pedra, eu procuro
+	todas as vezes que ele jogou pedra e guardo a
+	seguinte*/
+	if(historico[(i-1)%K] == PEDRA){
+		for(j = 0; j < K; j++){
+			if(historico[j] == PEDRA){
+				tot++;
+				if(historico[(j+1)%K] == PEDRA)
+					pedra++;
+				else if(historico[(j+1)%K] == PAPEL)
+					papel++;
+				else if(historico[(j+1)%K] == TESOURA)
+					tesoura++;
+			}
+		}
+	} 
 
-	return nancy;
+	/*processo análogo no caso da ultima ser tesoura*/
+	else if(historico[(i-1)%K] == TESOURA){
+		for(j = 0; j < K; j++){
+			if(historico[j] == TESOURA){
+				tot++;
+				if(historico[(j+1)%K] == PEDRA)
+					pedra++;
+				else if(historico[(j+1)%K] == PAPEL)
+					papel++;
+				else if(historico[(j+1)%K] == TESOURA)
+					tesoura++;
+			}
+		}
+	} 
+
+	/* .. ultima papel */
+	else if(historico[(i-1)%K] == PAPEL){
+		for(j = 0; j < K; j++){
+			if(historico[j] == PAPEL){
+				tot++;
+				if(historico[(j+1)%K] == PEDRA)
+					pedra++;
+				else if(historico[(j+1)%K] == PAPEL)
+					papel++;
+				else if(historico[(j+1)%K] == TESOURA)
+					tesoura++;
+			}
+		}
+	} 
+
+	/* chance do cara jogar papel */
+	if( (float) x/m < (float) papel/tot )
+		jogNancy = TESOURA;
+	/* chance do cara jogar tesoura */
+	else if( (float) x/m < (float) (tesoura+papel)/tot )
+		jogNancy = PEDRA;
+	/* chance do cara jogar pedra */	
+	else if( (float) x/m <= 1 )
+		jogNancy = PAPEL;
+
+	return jogNancy;
 
 }
 
@@ -115,7 +160,7 @@ int main(){
 	pedra,papel,tesoura,tot = contadores do modo medio
 	*/
 
-	int jogNancy, jogHumano, i, j, dif, historico[K], pedra, papel, tesoura, tot;
+	int jogNancy, jogHumano, i, dif;
 
 	vitHumano = vitNancy = empates = partidas = 0;
 	
@@ -147,6 +192,7 @@ int main(){
 
 	} else if(dif == 2){
 
+		/*jogo aleatório nas K primeiras jogadas */
 		printf("Insira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
 		scanf("%d",&jogHumano);
 		historico[0] = jogHumano;
@@ -159,71 +205,19 @@ int main(){
 
 			printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
 			scanf("%d",&jogHumano);
-			historico[i] = jogHumano;
-			
+			historico[i] = jogHumano;	
 		}
 
 		x = random(x);
 		jogNancy = facil(x);
 
+		/*agora eu começo a aplicar as condicionais*/
 		for(i = K; jogHumano; i++){
 
-			verifica(jogNancy,jogHumano);
-
-			pedra = papel = tesoura = tot = 0;
+			verifica(jogNancy,jogHumano);			
 			
-			/* se a anterior for pedra, eu procuro
-			todas as vezes que ele jogou pedra e marco
-			a proxima jogada*/
-			if(historico[(i-1)%K] == PEDRA){
-				for(j = 0; j < K; j++){
-					if(historico[j] == PEDRA){
-						tot++;
-						if(historico[(j+1)%K] == PEDRA){
-							pedra++;
-						} else if(historico[(j+1)%K] == PAPEL){
-							papel++;
-						} else if(historico[(j+1)%K] == TESOURA){
-							tesoura++;
-						}
-					}
-				}
-			} 
-
-			/*se a jogada anterior for tesoura ...*/
-			else if(historico[(i-1)%K] == TESOURA){
-				for(j = 0; j < K; j++){
-					if(historico[j] == TESOURA){
-						tot++;
-						if(historico[(j+1)%K] == PEDRA){
-							pedra++;
-						} else if(historico[(j+1)%K] == PAPEL){
-							papel++;
-						} else if(historico[(j+1)%K] == TESOURA){
-							tesoura++;
-						}
-					}
-				}
-			} 
-
-			/*se a jogada anterior for papel ... */
-			else if(historico[(i-1)%K] == PAPEL){
-				for(j = 0; j < K; j++){
-					if(historico[j] == PAPEL){
-						tot++;
-						if(historico[(j+1)%K] == PEDRA){
-							pedra++;
-						} else if(historico[(j+1)%K] == PAPEL){
-							papel++;
-						} else if(historico[(j+1)%K] == TESOURA){
-							tesoura++;
-						}
-					}
-				} 
-			} 
-
 			x = random(x);
-			jogNancy = medio(x,pedra,tesoura,papel,tot);
+			jogNancy = medio(x,i);
 
 			printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
 			scanf("%d",&jogHumano);
