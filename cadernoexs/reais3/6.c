@@ -2,20 +2,24 @@
 
 int main(){
 
-	float x, eps, seno, termo;
-	int k = 2;
+	float x, cosseno, termo;
+	int i = 0, n, k = 1;
 
-	scanf("%f %f",&x,&eps);
+	printf("Insira um real e N natural\n");
+	scanf("%f %d",&x,&n);
 
-	seno = termo = x;	
+	cosseno = termo = 1;
 
-	while (termo > eps){
+	while(i < n){
 		termo = -termo*x*x/(k*(k+1));
-		seno += termo;
+		cosseno += termo;
 		k += 2;
-	}
+		i++;
+	}	
 
-	printf("%f\n", seno);
+	
+
+	printf("Cosseno de %f: %f\n",x,cosseno);
 
 
 	return 0;
