@@ -1,8 +1,8 @@
-/*	********************************************************************* */
-/*	Nome:	Gabriel de Russo e Carmo																																																																																			*/
-/*	Numero	USP:	9298041																																																									*/
-/*	Exercício-programa	2																																																																																																							*/
-/*	********************************************************************* */
+/*  ********************************************************************* */
+/*  Nome:   Gabriel de Russo e Carmo                                                                                                                                                                                                                                                                                                                                            */
+/*  Numero  USP:    9298041                                                                                                                                                                                                                                 */
+/*  Exercício-programa  2                                                                                                                                                                                                                                                                                                                                                                                                                           */
+/*  ********************************************************************* */
 
 #include <stdio.h>
 #define PEDRA 0
@@ -10,313 +10,296 @@
 #define PAPEL 2
 #define K 20
 
-int vitHumano, vitNancy, empates, partidas, historico[K];
-float score1, score2, score3;
+int vitoriasHumano, vitoriasNancy, empates, partidas, historico[K];
+int score[6];
 
-long random(long x){
+long random(long semente){
+    int a = 22695477;
+    int b = 1;
+    long m = 4294967296;
 
-	int a,b;
-	long m;
-
-	a = 22695477;
-	b = 1;
-	m = 4294967296;
-
-	x = (x*a + b)%m;
-
-	return x;
-
+    return ((semente * a) + b) % m;
 }
 
-int facil(long x){
+int entradaHumano(){
+    int jogadaHumano;
 
-	int nancy;
-	long m;
-	m = 4294967296;
+    printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
+    scanf("%d",&jogadaHumano);
+    jogadaHumano--;
 
-	if( (float) x/m < 1.0/3 ){
-		nancy = PEDRA;
-	}	
-	else if( (float) x/m < 2.0/3 ){
-		nancy = TESOURA;
-	}	
-	else if( (float) x/m < 1 ){
-		nancy = PAPEL;
-	}
-
-	return nancy;
-
+    return jogadaHumano;
 }
 
-int medio(long x, int i){
+void verificaResultado(int jogadaNancy, int jogadaHumano){
+    if(jogadaNancy == PEDRA){
+        printf("(Nancy) Pedra X");
+    } else if (jogadaNancy == TESOURA){
+        printf("(Nancy) Tesoura X");
+    } else if (jogadaNancy == PAPEL){
+        printf("(Nancy) Papel X");
+    }
 
-	int j, jogNancy, pedra, papel, tesoura, tot;
-	long m;
-	m = 4294967296;
-	pedra = papel = tesoura = tot = 0;
+    if(jogadaHumano == PEDRA){
+        printf(" Pedra (Voce)\n");
+    } else if(jogadaHumano == TESOURA){
+        printf(" Tesoura (Voce)\n");
+    } else if(jogadaHumano == PAPEL){
+        printf(" Papel (Voce)\n");
+    }
 
-	/* se a anterior for pedra, eu procuro
-	todas as vezes que ele jogou pedra e guardo a
-	seguinte*/
-	if(historico[(i-1)%K] == PEDRA){
-		for(j = 0; j < K; j++){
-			if(historico[j] == PEDRA){
-				tot++;
-				if(historico[(j+1)%K] == PEDRA)
-					pedra++;
-				else if(historico[(j+1)%K] == PAPEL)
-					papel++;
-				else if(historico[(j+1)%K] == TESOURA)
-					tesoura++;
-			}
-		}
-	} 
+    if(jogadaNancy == jogadaHumano){
+        printf("Empate!\n");
+        empates++;
+    } else if(jogadaHumano - jogadaNancy == 1 || jogadaHumano - jogadaNancy == -2){
+        printf("Nancy ganhou!\n");
+        vitoriasNancy++;
+    } else {
+        printf("Voce ganhou!\n");
+        vitoriasHumano++;
+    }
 
-	/*processo análogo no caso da ultima ser tesoura*/
-	else if(historico[(i-1)%K] == TESOURA){
-		for(j = 0; j < K; j++){
-			if(historico[j] == TESOURA){
-				tot++;
-				if(historico[(j+1)%K] == PEDRA)
-					pedra++;
-				else if(historico[(j+1)%K] == PAPEL)
-					papel++;
-				else if(historico[(j+1)%K] == TESOURA)
-					tesoura++;
-			}
-		}
-	} 
+    partidas++;
+}
 
-	/* .. ultima papel */
-	else if(historico[(i-1)%K] == PAPEL){
-		for(j = 0; j < K; j++){
-			if(historico[j] == PAPEL){
-				tot++;
-				if(historico[(j+1)%K] == PEDRA)
-					pedra++;
-				else if(historico[(j+1)%K] == PAPEL)
-					papel++;
-				else if(historico[(j+1)%K] == TESOURA)
-					tesoura++;
-			}
-		}
-	} 
+int facil(long semente){
+    int jogadaNancy;
+    long m = 4294967296;
 
-	/* chance do cara jogar papel */
-	if( (float) x/m < (float) papel/tot )
-		jogNancy = TESOURA;
-	/* chance do cara jogar tesoura */
-	else if( (float) x/m < (float) (tesoura+papel)/tot )
-		jogNancy = PEDRA;
-	/* chance do cara jogar pedra */	
-	else if( (float) x/m <= 1 )
-		jogNancy = PAPEL;
+    if( (float) semente/m < 1.0/3 ){
+        jogadaNancy = PEDRA;
+    }   
+    else if( (float) semente/m < 2.0/3 ){
+        jogadaNancy = TESOURA;
+    }   
+    else if( (float) semente/m < 1 ){
+        jogadaNancy = PAPEL;
+    }
 
-	return jogNancy;
+    return jogadaNancy;
+}
 
+int medio(long semente, int i){
+    int j, jogadaNancy, contPedra, contPapel, contTesoura, total;
+    long m = 4294967296;
+    contPedra = contPapel = contTesoura = total = 0;
+
+    /* se a anterior for pedra, eu procuro
+    todas as vezes que ele jogou pedra e guardo a
+    seguinte num contador*/
+    if(historico[(i-1)%K] == PEDRA){
+        for(j = 0; j < K; j++){
+            if(historico[j] == PEDRA){
+                total++;
+                if(historico[(j+1)%K] == PEDRA)
+                    contPedra++;
+                else if(historico[(j+1)%K] == PAPEL)
+                    contPapel++;
+                else if(historico[(j+1)%K] == TESOURA)
+                    contTesoura++;
+            }
+        }
+    } 
+
+    /*processo análogo no caso da anterior ser tesoura*/
+    else if(historico[(i-1)%K] == TESOURA){
+        for(j = 0; j < K; j++){
+            if(historico[j] == TESOURA){
+                total++;
+                if(historico[(j+1)%K] == PEDRA)
+                    contPedra++;
+                else if(historico[(j+1)%K] == PAPEL)
+                    contPapel++;
+                else if(historico[(j+1)%K] == TESOURA)
+                    contTesoura++;
+            }
+        }
+    } 
+
+    /*processo análogo no caso da anterior ser papel*/
+    else if(historico[(i-1)%K] == PAPEL){
+        for(j = 0; j < K; j++){
+            if(historico[j] == PAPEL){
+                total++;
+                if(historico[(j+1)%K] == PEDRA)
+                    contPedra++;
+                else if(historico[(j+1)%K] == PAPEL)
+                    contPapel++;
+                else if(historico[(j+1)%K] == TESOURA)
+                    contTesoura++;
+            }
+        }
+    } 
+
+    /*agora a jogada da maquina é decidida com base nesses contadores:
+    eu pego um aleatorio e coloco */
+
+    /* chance do cara jogar papel */
+    if( (float) semente/m < (float) contPapel/total )
+        jogadaNancy = TESOURA;
+    /* chance do cara jogar tesoura */
+    else if( (float) semente/m < (float) (contPapel + contTesoura)/total )
+        jogadaNancy = PEDRA;
+    /* chance do cara jogar pedra */    
+    else if( (float) semente/m <= (contPapel + contTesoura + contPedra)/total )
+        jogadaNancy = PAPEL;
+
+    return jogadaNancy;
 }
 
 /*
 Com base nas estrategias de
 http://www.dllu.net/programming/rps/
 */
-void contaDificil(int jogNancy, int jogHumano){
 
-	int e1,e2,e3;
-
-	e1 = jogNancy;
-	e2 = (e1+2)%3;
-	e3 = (e2+2)%3;
-
-	printf("H: %d E1: %d E2: %d E3:%d\n",jogHumano,e1,e2,e3);
-
-	if(e1 == jogHumano){
-		score2++;
-		score3--;
-	} else if(e2 == jogHumano){
-		score1--;
-		score3++;
-	} else if(e3 == jogHumano){
-		score1++;
-		score2--; 
-	}
-
-	/*score1 = score1*0.9;
-	score2 = score2*0.9;
-	score3 = score3*0.9;*/
-
-	printf("Scores: %f %f %f\n",score1,score2,score3);
-
+int desempenho(int meta, int jogadaHumano){
+    if(meta == jogadaHumano)
+        return 0;
+    else if(meta - jogadaHumano == 2 || meta - jogadaHumano == -1)
+        return 1;
+    else
+        return -1;
 }
 
-int dificil(int jogNancy){
+int dificil(int jogadaNancy, int jogadaHumano){
 
-	if(score1 > score2 && score1 > score3)
-		jogNancy = jogNancy;
-	else if(score2 > score3 && score2 > score1)
-		jogNancy = (jogNancy + 2)%3;
-	else if(score3 > score1 && score3 > score2)
-		jogNancy = ((jogNancy + 2)%3 + 2)%3;
+    int meta[6],maior,ind,i;
+    //previ que ele vai jogar pedra
+    meta[0] = jogadaNancy; //2 papel
+    //ele sabe que eu previ e vou jogar papel, entao me antecipa e tesoura
+    meta[1] = (meta[0]+1)%3; //0 pedra
+    //ele sabe que eu sei que ele vai jogar tesoura, entao joga papel
+    meta[2] = (meta[1]+1)%3; //1 tesoura
 
-	return jogNancy;
+    //agora eu troco de lugar com ele
 
-}
+    //ele previu que eu jogaria papel, logo deve jogar tesoura
+    meta[3] = (meta[0]+1)%3; //1 tesoura
+    //ele sabe que eu tento me antecipar e jogar pedra, entao joga papel
+    meta[4] = (meta[3]+1)%3; //2 papel
+    //ele sabe que eu tento antecipa-lo de novo e jogo papel, entao joga pedra
+    meta[5] = (meta[4]+1)%3; //0 pedra
 
-void verifica(int jogNancy, int jogHumano){
+    maior = score[0];
+    ind = 0;
+    for(i = 1; i < 6; i++){
+        if(score[i] > maior){
+            maior = score[i];
+            ind = i;
+        }
+    }
 
-	if(jogNancy == PEDRA){
-		printf("(Nancy) Pedra X");
-	} else if (jogNancy == TESOURA){
-		printf("(Nancy) Tesoura X");
-	} else if (jogNancy == PAPEL){
-		printf("(Nancy) Papel X");
-	}
+    jogadaNancy = meta[ind];
 
+    for(i = 0; i < 6; i++){
+        score[i] += desempenho(meta[i],jogadaHumano);
+    }
 
-	if(jogHumano == PEDRA){
-		printf(" Pedra (Voce)\n");
-	} else if(jogHumano == TESOURA){
-		printf(" Tesoura (Voce)\n");
-	} else if(jogHumano == PAPEL){
-		printf(" Papel (Voce)\n");
-	}
-
-	if(jogNancy == jogHumano){
-		printf("Empate!\n");
-		empates++;
-	} else if(jogHumano - jogNancy == 1 || jogHumano - jogNancy == -2){
-		printf("Nancy ganhou!\n");
-		vitNancy++;
-	} else {
-		printf("Voce ganhou!\n");
-		vitHumano++;
-	}
-
-	partidas++;
-
+    return jogadaNancy;
 }
 
 int main(){
+    int jogadaNancy, jogadaHumano, i, dif;
+    long semente = 2;
 
-	int jogNancy, jogHumano, i, dif;
-	long x = 3;
+    vitoriasHumano = vitoriasNancy = empates = partidas = 0;
+    
+    for(i = 0; i < 6; i++){
+        score[i] = 0;
+    }
+        
+    printf("Escolha a dificuldade:\n");
+    printf("1 - Fácil\n");
+    printf("2 - Médio\n");
+    printf("3 - Difícil\n");
+    scanf("%d",&dif);
 
-	vitHumano = vitNancy = empates = partidas = 0;
-	score1 = score2 = score3 = 0;
-		
-	printf("Escolha a dificuldade:\n");
-	printf("1 - Fácil\n");
-	printf("2 - Médio\n");
-	printf("3 - Difícil\n");
-	scanf("%d",&dif);
+    /*MODO FACIL*/
+    if(dif == 1){
+        /*todas as jogadas sao aleatorias*/
+        jogadaHumano = entradaHumano();
 
-	printf("\n");
+        while(jogadaHumano >= 0){            
+            semente = random(semente);
+            jogadaNancy = facil(semente);
+            verificaResultado(jogadaNancy,jogadaHumano);
 
-	/*MODO FACIL*/
-	if(dif == 1){
+            jogadaHumano = entradaHumano();
+        }
 
-		printf("Insira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-		scanf("%d",&jogHumano);
-		jogHumano--;
+    /*MODO MEDIO*/
+    } else if(dif == 2){
+        /*primeiramente joga-se aleatoriamente as K primeiras jogadas,
+        sempre guardando o movimento do humano*/
+        semente = random(semente);
+        jogadaNancy = facil(semente);
 
-		while(jogHumano >= 0){
-			
-			x = random(x);
-			jogNancy = facil(x);
-			verifica(jogNancy,jogHumano);
+        jogadaHumano = entradaHumano();
+        historico[0] = jogadaHumano;
 
-			printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-			scanf("%d",&jogHumano);
-			jogHumano--;
+        for(i = 1; i < K && jogadaHumano >= 0; i++){
+            verificaResultado(jogadaNancy,jogadaHumano);
 
-		}
+            semente = random(semente);
+            jogadaNancy = facil(semente);
 
-	/*MODO MEDIO*/
-	} else if(dif == 2){
+            jogadaHumano = entradaHumano();
+            historico[i] = jogadaHumano;
+        }
+    
+        /*agora eu começo a aplicar as condicionais explicadas na funcao medio*/
+        for(i = K; jogadaHumano >= 0; i++){
+            verificaResultado(jogadaNancy,jogadaHumano);           
+            
+            semente = random(semente);
+            jogadaNancy = medio(semente,i);
 
-		/*jogo aleatório nas K primeiras jogadas */
-		printf("Insira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-		scanf("%d",&jogHumano);
-		jogHumano--;
-		historico[0] = jogHumano;
-		x = random(x);
-		jogNancy = facil(x);
+            jogadaHumano = entradaHumano();
+            historico[i%K] = jogadaHumano;
+        }
 
-		for(i = 1; i < K && jogHumano >= 0; i++){
-			verifica(jogNancy,jogHumano);
+    /*MODO DIFICIL*/
+    } else if(dif == 3){ 
+        /*jogo aleatório nas K primeiras jogadas, como no medio*/
+        semente = random(semente);
+        jogadaNancy = facil(semente);
 
-			printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-			scanf("%d",&jogHumano);
-			jogHumano--;
-			historico[i] = jogHumano;
+        jogadaHumano = entradaHumano();
+        historico[0] = jogadaHumano;
 
-			x = random(x);
-			jogNancy = facil(x);	
-		}
-	
-		/*agora eu começo a aplicar as condicionais*/
-		for(i = K; jogHumano >= 0; i++){
-			verifica(jogNancy,jogHumano);			
-			
-			x = random(x);
-			jogNancy = medio(x,i);
+        for(i = 1; i < K && jogadaHumano >= 0; i++){
+            verificaResultado(jogadaNancy,jogadaHumano);
 
-			printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-			scanf("%d",&jogHumano);
-			jogHumano--;
-			historico[i%K] = jogHumano;
-		}
+            semente = random(semente);
+            jogadaNancy = facil(semente);
 
-	/*MODO DIFICIL*/
-	} else if(dif == 3){
-		
+            jogadaHumano = entradaHumano();
+            historico[i] = jogadaHumano;
+        }
+    
+        /*agora eu começo a aplicar as condicionais explicadas na funcao medio*/
+        for(i = K; jogadaHumano >= 0; i++){
+            verificaResultado(jogadaNancy,jogadaHumano);           
+            
+            semente = random(semente);
+            jogadaNancy = dificil(medio(semente,i),jogadaHumano);
 
-		/*jogo aleatório nas K primeiras jogadas */
-		printf("Insira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-		scanf("%d",&jogHumano);
-		jogHumano--;
-		historico[0] = jogHumano;
-		x = random(x);
-		jogNancy = facil(x);
+            jogadaHumano = entradaHumano();
+            historico[i%K] = jogadaHumano;
+        }
+    }
 
-		for(i = 1; i < K && jogHumano >= 0; i++){
-			verifica(jogNancy,jogHumano);
+    printf("\nResultados finais:\n");
+    printf("Vitórias Nancy:  %.2f%% (%d)\n",(float) vitoriasNancy/partidas*100,vitoriasNancy);
+    printf("Vitórias Humano: %.2f%% (%d)\n",(float) vitoriasHumano/partidas*100,vitoriasHumano);
+    printf("Empates:         %.2f%% (%d)\n",(float) empates/partidas*100,empates); 
+    printf("Partidas:        %d\n",partidas); 
+    
+    for(i = 0; i < 6; i++)
+        printf("%d ",score[i]);
 
-			printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-			scanf("%d",&jogHumano);
-			jogHumano--;
-			historico[i] = jogHumano;
+    printf("\n");
 
-			x = random(x);
-			jogNancy = facil(x);	
-		}
-	
-		/*agora eu começo a aplicar as condicionais*/
-		for(i = K; jogHumano >= 0; i++){
-			contaDificil(medio(x,i),jogHumano);	
-			verifica(jogNancy,jogHumano);
-
-			x = random(x);
-			
-			jogNancy = dificil(jogNancy);
-
-			printf("\nInsira 1 (pedra), 2 (tesoura), 3 (papel) ou 0 para sair.\n");
-			scanf("%d",&jogHumano);
-			jogHumano--;
-			historico[i%K] = jogHumano;
-		}		
-
-	}
-
-	printf(" ______________________ \n");
-	printf("|     Quadro Geral     |\n");
-	printf("|                      |\n");
-	printf("| Nancy: %d vitórias.  |\n",vitNancy);
-	printf("| Você: %d vitórias.   |\n",vitHumano);
-	printf("| Empates: %d.         |\n",empates);
-	printf("| Total: %d.           |\n",partidas);
-	printf("|______________________|\n");	
-	
-	return 0;
+    return 0;
 
 }
