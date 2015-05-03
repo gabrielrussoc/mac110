@@ -8,7 +8,7 @@ Exercício-programa  2
 #define PEDRA 0
 #define TESOURA 1
 #define PAPEL 2
-#define K 20
+#define K 21
 #define MAX 4294967296
 
 /*Essa funcao gera sementes para as jogadas aleatorias
@@ -74,7 +74,7 @@ int facil(long long semente){
 
 /*A jogada do modo medio tenta prever a proxima jogada do humano com 
 base na jogada anterior e um historico de jogadas de tamanho K.
-O K escolhido foi 20, uma vez que apresentou resultados razoaveis quando
+O K escolhido foi 21, uma vez que apresentou resultados razoaveis quando
 comparado com outros valores. Menores que isso podiam perder informaçao
 importante e maiores podiam acumular informaçao prejudicial (pensando na
 mente humana como adversario e nao em outro algoritmo)*/
@@ -100,7 +100,8 @@ http://www.ofb.net/~egnor/iocaine.html
 O metodo dificil consiste no uso algoritmo de prediçao ja implementado
 (modo medio) com o conceito de meta-estrategia. Basicamente, considera que
 o humano pode prever a jogada da maquina, uma vez que o algoritmo de predicao 
-eh bastante simples e facilmente contornavel - uma especie de defesa.
+eh bastante simples e facilmente contornavel - uma especie de defesa. Eh menos
+agressivo que o modo medio, mas muito menos sucetivel a derrota.
 Usarei 3 meta-estrategias que, em exemplos, sao:
 O algoritmo previu pedra, logo:
 meta1: simplesmente jogar o que vence o previsto, no caso papel. 
@@ -218,12 +219,15 @@ int main(){
         else if(dificuldade == 2 || dificuldade == 3){
             contPapel = contTesoura = total = 0;
             for(j = 0; j < K; j++){
-                if(historico[j] == historico[(i - 1) % K]){
-                    total++;
-                    if(historico[(j + 1) % K] == PAPEL)
-                       contPapel++;
-                    else if(historico[(j + 1) % K] == TESOURA)
-                        contTesoura++;
+                /*a jogada anterior eh a ultima, logo nao tem proxima*/
+                if(j != (i - 1) % K){ 
+                    if(historico[j] == historico[(i - 1) % K]){
+                        total++;
+                        if(historico[(j + 1) % K] == PAPEL)
+                           contPapel++;
+                        else if(historico[(j + 1) % K] == TESOURA)
+                            contTesoura++;
+                    }
                 }
             }
             if(dificuldade == 2)
