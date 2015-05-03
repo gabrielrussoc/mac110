@@ -151,7 +151,7 @@ int main(){
 
     /*inicializacoes*/
     vitoriasHumano = vitoriasNancy = empates = partidas = 0;
-    score0 = score1 = score2 = 0;
+    score0 = score1 = score2 = auxiliar = 0;
 
     printf("\nBem-vindo ao famoso jogo do Pedra, Papel e Tesoura!\n\n");
     printf("Lembre-se que:\n");
@@ -205,11 +205,17 @@ int main(){
         else
             vitoriasHumano++;
 
+        /*As dificuldades estao explicadas em mais detalhes nas funcoes*/
+        semente = random(semente);
+
+        if(dificuldade == 1)
+            jogadaNancy = facil(semente);
+
         /*Algoritmo de prediçao: dado a ultima jogada do humano, eu procuro
         todas as vezes que ele a jogou e guardo a proxima num contador
         especifico (nao preciso de um contador para pedra pois eh justamente
         a diferenca do total pelos outros dois) - nao preciso dele no facil*/
-        if(dificuldade == 2 || dificuldade == 3){
+        else if(dificuldade == 2 || dificuldade == 3){
             contPapel = contTesoura = total = 0;
             for(j = 0; j < K; j++){
                 if(historico[j] == historico[(i - 1) % K]){
@@ -220,18 +226,12 @@ int main(){
                         contTesoura++;
                 }
             }
-        }
-
-        semente = random(semente);
-
-        /*As dificuldades estao explicadas em mais detalhes nas funcoes*/
-        if(dificuldade == 1)
-            jogadaNancy = facil(semente);
-        else if(dificuldade == 2)
-            jogadaNancy = medio(semente,contPapel,contTesoura,total);
-        else if(dificuldade == 3){
-            auxiliar = medio(semente,contPapel,contTesoura,total);
-            jogadaNancy = dificil(auxiliar, score0, score1, score2);
+            if(dificuldade == 2)
+                jogadaNancy = medio(semente,contPapel,contTesoura,total);
+            else if(dificuldade == 3){
+                auxiliar = medio(semente,contPapel,contTesoura,total);
+                jogadaNancy = dificil(auxiliar, score0, score1, score2);
+            }
         }
 
         jogadaHumano = entradaHumano();
