@@ -18,44 +18,40 @@ int encaixa(int a, int b){
 
 int main(){
 
-	int a,b,seg = 0,aux;
+	int a,b,seg = 0,aux,maior,menor;
 
-	//item a
+	/*item a
 	printf("Insira a e b\n");
 	scanf("%d %d",&a,&b);
 
 	if(encaixa(a,b))
 		printf("%d encaixa em %d\n",b,a);
 	else
-		printf("%d NAO encaixa em %d\n",b,a);
+		printf("%d NAO encaixa em %d\n",b,a);*/
 
 	//item b
 	printf("Insira a e b\n");
 	scanf("%d %d",&a,&b);
 
 	if(a > b){
-		aux = a;
-		while(aux >= b && !seg){
-			if(encaixa(aux,b))
-				seg = 1;
-			aux = aux/10;
-		}
-		if(seg)
-			printf("%d é segmento de %d\n",b,a);
+		maior = a;
+		menor = b;
 	} else {
-		aux = b;
-		while(aux >= a && !seg){
-			if(encaixa(aux, a))
-				seg = 1;
-			aux = aux/10;
-		}	
-		if(seg)
-			printf("%d é segmento de %d\n",a,b);
+		maior = b;
+		menor = a;
 	}
 
-	if(!seg)
-		printf("um nao é segmento do outro\n");
+	aux = maior;
+	while(aux && !seg){
+		if(encaixa(aux,menor))
+			seg = 1;
+		aux = aux/10;
+	}
 
-	
+	if(seg)
+		printf("%d eh segmento de %d\n",menor,maior);
+	else
+		printf("um nao eh segmento do outro\n");
+
 	return 0;
 }
