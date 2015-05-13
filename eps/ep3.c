@@ -75,7 +75,7 @@ int main(){
 		for(i = 0; i < n; i++){
 			if(plaincode[i] == 27)
 				plaintext[i] = '.';
-			else if(ciphercode[i] == 0)
+			else if(plaincode[i] == 0)
 				plaintext[i] = '_';
 			else
 				plaintext[i] = plaincode[i] + 'A' - 1;
