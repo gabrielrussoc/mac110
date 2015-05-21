@@ -17,7 +17,8 @@ int main(){
 	
 	int k,i,n,aux;
 
-	k = 11;
+	printf("Insira K\n");
+	scanf("%d",&k);
 	
 	printf("Voce deseja: \n");
 	printf("1 - Encriptar\n");
