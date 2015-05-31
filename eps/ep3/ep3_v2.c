@@ -1,3 +1,9 @@
+/* ********************************************************************* 
+Nome:   Gabriel de Russo e Carmo
+Numero  USP:    9298041
+Exercício-programa  3
+********************************************************************* */
+
 #include <stdio.h>
 #define MAX 15000
 #define TRUE 1
@@ -109,12 +115,16 @@ int main(){
             while(leitura != EOF && !encontrei){
                 /*pego cada palavra do dicionario e seu tamanho*/
                 leitura = fscanf(dicionario,"%c",&dicAtual[0]);
-                for(p = 1; dicAtual[p-1] != '\n'; p++)
+                for(p = 1; dicAtual[p-1] != '\n'; p++){
                     leitura = fscanf(dicionario,"%c",&dicAtual[p]);
+                    /*se eu ler um hífen, eu volto uma posição para ignora-lo*/
+                    if(dicAtual[p] == '-')
+                        p--;
+                }
                 tamanhoDic = p - 1;
                 /*assumo q sao diferentes*/
                 diferente = TRUE;
-                /*se tiverem o mesmo tamanho e mesma letra eu comparo melhor*/
+                /*se tiverem o mesmo tamanho e mesma letra inicial eu comparo melhor*/
                 if(tamanhoDic == tamanhoPal && palavraAtual[0] == dicAtual[0]){
                     /*nesse caso, assumo que sao iguais*/
                     diferente = FALSE;
